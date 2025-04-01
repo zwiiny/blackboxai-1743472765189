@@ -2,7 +2,7 @@
 session_start();
 require_once 'config.php';
 
-// Redirect to login if not authenticated
+// Redirecionar se não autenticado
 if (!isset($_SESSION['user_id'])) {
     header('Location: index.php');
     exit;
@@ -21,9 +21,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $service_history = trim($_POST['service_history'] ?? '');
 
-    // Basic validation
+    // Validação básica
     if (empty($name) || empty($phone)) {
-        $_SESSION['error'] = 'Name and phone are required fields';
+        $_SESSION['error'] = 'Nome e telefone são campos obrigatórios';
         header("Location: edit_client.php?id=$clientId");
         exit;
     }
@@ -32,11 +32,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("UPDATE clients SET name = ?, phone = ?, email = ?, service_history = ? WHERE id = ?");
         $stmt->execute([$name, $phone, $email, $service_history, $clientId]);
         
-        $_SESSION['success'] = 'Client updated successfully!';
+        $_SESSION['success'] = 'Cliente atualizado com sucesso!';
         header("Location: edit_client.php?id=$clientId");
         exit;
     } catch (PDOException $e) {
-        $_SESSION['error'] = 'Error updating client: ' . $e->getMessage();
+        $_SESSION['error'] = 'Erro ao atualizar cliente: ' . $e->getMessage();
         header("Location: edit_client.php?id=$clientId");
         exit;
     }
