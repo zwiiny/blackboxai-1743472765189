@@ -2,7 +2,7 @@
 session_start();
 require_once 'config.php';
 
-// Redirect to login if not authenticated
+// Redirecionar se não autenticado
 if (!isset($_SESSION['user_id'])) {
     header('Location: index.php');
     exit;
@@ -14,9 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $service_history = trim($_POST['service_history'] ?? '');
 
-    // Basic validation
+    // Validação básica
     if (empty($name) || empty($phone)) {
-        $_SESSION['error'] = 'Name and phone are required fields';
+        $_SESSION['error'] = 'Nome e telefone são campos obrigatórios';
         header('Location: add_client.php');
         exit;
     }
@@ -25,11 +25,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("INSERT INTO clients (name, phone, email, service_history) VALUES (?, ?, ?, ?)");
         $stmt->execute([$name, $phone, $email, $service_history]);
         
-        $_SESSION['success'] = 'Client added successfully!';
+        $_SESSION['success'] = 'Cliente adicionado com sucesso!';
         header('Location: client_list.php');
         exit;
     } catch (PDOException $e) {
-        $_SESSION['error'] = 'Error adding client: ' . $e->getMessage();
+        $_SESSION['error'] = 'Erro ao adicionar cliente: ' . $e->getMessage();
         header('Location: add_client.php');
         exit;
     }
