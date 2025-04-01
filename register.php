@@ -14,65 +14,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
 
-    // Validation
+    // Validação
     if (empty($username)) {
-        $errors['username'] = 'Username is required';
+        $errors['username'] = 'Nome de usuário é obrigatório';
     } elseif (strlen($username) < 4) {
-        $errors['username'] = 'Username must be at least 4 characters';
+        $errors['username'] = 'Nome de usuário deve ter pelo menos 4 caracteres';
     }
 
     if (empty($email)) {
-        $errors['email'] = 'Email is required';
+        $errors['email'] = 'Email é obrigatório';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = 'Please enter a valid email';
+        $errors['email'] = 'Por favor insira um email válido';
     }
 
     if (empty($password)) {
-        $errors['password'] = 'Password is required';
+        $errors['password'] = 'Senha é obrigatória';
     } elseif (strlen($password) < 6) {
-        $errors['password'] = 'Password must be at least 6 characters';
+        $errors['password'] = 'Senha deve ter pelo menos 6 caracteres';
     }
 
     if ($password !== $confirm_password) {
-        $errors['confirm_password'] = 'Passwords do not match';
+        $errors['confirm_password'] = 'As senhas não coincidem';
     }
 
-    // Check if username/email exists
+    // Verificar se usuário/email já existe
     if (empty($errors)) {
         $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
         $stmt->execute([$username, $email]);
         if ($stmt->fetch()) {
-            $errors['general'] = 'Username or email already exists';
+            $errors['general'] = 'Nome de usuário ou email já existem';
         }
     }
 
-    // Create user if no errors
+    // Criar usuário se não houver erros
     if (empty($errors)) {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         $stmt = $pdo->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
         if ($stmt->execute([$username, $email, $hashed_password])) {
-            $_SESSION['success_message'] = 'Registration successful! Please login.';
+            $_SESSION['success_message'] = 'Cadastro realizado com sucesso! Por favor faça login.';
             header('Location: index.php');
             exit;
         } else {
-            $errors['general'] = 'Registration failed. Please try again.';
+            $errors['general'] = 'Falha no cadastro. Por favor tente novamente.';
         }
     }
 }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barber Shop - Register</title>
+    <title>Barbearia - Cadastro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="bg-gray-100">
     <div class="min-h-screen flex items-center justify-center">
         <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-            <h1 class="text-2xl font-bold text-center mb-6">Create an Account</h1>
+            <h1 class="text-2xl font-bold text-center mb-6">Criar uma Conta</h1>
             
             <?php if (!empty($errors['general'])): ?>
                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <form method="POST">
                 <div class="mb-4">
-                    <label class="block text-gray-700 mb-2" for="username">Username</label>
+                    <label class="block text-gray-700 mb-2" for="username">Nome de Usuário</label>
                     <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($username ?? ''); ?>" required
                         class="w-full px-3 py-2 border <?php echo isset($errors['username']) ? 'border-red-500' : 'border-gray-300'; ?> rounded-md">
                     <?php if (isset($errors['username'])): ?>
@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-gray-700 mb-2" for="password">Password</label>
+                    <label class="block text-gray-700 mb-2" for="password">Senha</label>
                     <input type="password" id="password" name="password" required
                         class="w-full px-3 py-2 border <?php echo isset($errors['password']) ? 'border-red-500' : 'border-gray-300'; ?> rounded-md">
                     <?php if (isset($errors['password'])): ?>
@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <div class="mb-6">
-                    <label class="block text-gray-700 mb-2" for="confirm_password">Confirm Password</label>
+                    <label class="block text-gray-700 mb-2" for="confirm_password">Confirmar Senha</label>
                     <input type="password" id="confirm_password" name="confirm_password" required
                         class="w-full px-3 py-2 border <?php echo isset($errors['confirm_password']) ? 'border-red-500' : 'border-gray-300'; ?> rounded-md">
                     <?php if (isset($errors['confirm_password'])): ?>
@@ -119,12 +119,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <button type="submit" 
                     class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-200">
-                    Register
+                    Cadastrar
                 </button>
             </form>
 
             <div class="mt-4 text-center">
-                <a href="index.php" class="text-blue-500 hover:underline">Already have an account? Login</a>
+                <a href="index.php" class="text-blue-500 hover:underline">Já tem uma conta? Faça login</a>
             </div>
         </div>
     </div>
