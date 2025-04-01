@@ -2,7 +2,7 @@
 session_start();
 require_once 'config.php';
 
-// Redirect to login if not authenticated
+// Redirecionar se não autenticado
 if (!isset($_SESSION['user_id'])) {
     header('Location: index.php');
     exit;
@@ -19,9 +19,9 @@ try {
     $stmt = $pdo->prepare("DELETE FROM clients WHERE id = ?");
     $stmt->execute([$clientId]);
     
-    $_SESSION['success'] = 'Client deleted successfully!';
+    $_SESSION['success'] = 'Cliente excluído com sucesso!';
 } catch (PDOException $e) {
-    $_SESSION['error'] = 'Error deleting client: ' . $e->getMessage();
+    $_SESSION['error'] = 'Erro ao excluir cliente: ' . $e->getMessage();
 }
 
 header('Location: client_list.php');
